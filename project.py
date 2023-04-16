@@ -5,9 +5,9 @@ Created on Sun Apr 16 14:52:28 2023
 @author: Kai Jun
 """
 
-import random;
 import numpy as np;
 import pandas as pd;
+import matplotlib.pyplot as plt;
 
 def hw(int_no):
     #Count number of ones in a byte...
@@ -37,14 +37,16 @@ Sbox = (
     0x8C, 0xA1, 0x89, 0x0D, 0xBF, 0xE6, 0x42, 0x68, 0x41, 0x99, 0x2D, 0x0F, 0xB0, 0x54, 0xBB, 0x16,
 )
 
+no_of_traces = 100;
+
 
 def getPlaintext(filename):
     collection_data = pd.read_csv(filename);
     plaintext_data = collection_data['Plaintext'];
     
-    plaintext_bytes = np.empty((16,100), dtype=int);
+    plaintext_bytes = np.empty((16,no_of_traces), dtype=int);
     for i in range(16):
-        for j in range(100):
+        for j in range(no_of_traces):
             plaintext_bytes[i][j] = int.from_bytes(bytes.fromhex(plaintext_data.loc[j])[i:i+1],"big")
             
     
@@ -53,10 +55,21 @@ def getPlaintext(filename):
     # print(int.from_bytes(bytes.fromhex(plaintext_data.loc[0])[0:1],"big"))
     
     return plaintext_bytes;
+
+def getPowerTrace(filename):
+    collection_data = pd.read_csv('waveform.csv')
+    power_traces = collection_data.drop(['Plaintext', 'CipherText'], axis='columns')
+    
+    sample_power_trace = np.empty((no_of_traces,2500));
+    
+    for i in range(no_of_traces):
+        sample_power_trace[i] = power_traces.loc[i].to_numpy()
+        plt.figure();
+        plt.plot(sample_power_trace[i]);
+        plt.show();
     
     
 def gethwmodel(plaintext_byte_array, k = 0x20):
-    no_of_traces = 100;
     
     # random_plaintext_first_bytes = []
 
@@ -91,10 +104,7 @@ def getAllKHW(plaintext_nth_byte):
     # print(len(power_model_matrix))
     pass;
     
-
-def main():
-    # getAllKHW();
-    # getPlaintext("waveform.csv")
+def getFullPowerMatrix():
     plaintext_bytes = getPlaintext("waveform.csv")
     full_power_matrix = [[]]*16;
     
@@ -102,6 +112,13 @@ def main():
         full_power_matrix[i] = getAllKHW(plaintext_bytes[i]);
     
     print(full_power_matrix)
+    
+    return full_power_matrix;
+    
+
+def main():
+   
+    getPowerTrace("waveform.csv");    
     
 if __name__ == "__main__":
     main();

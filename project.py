@@ -42,15 +42,15 @@ def getPlaintext(filename):
     collection_data = pd.read_csv(filename);
     plaintext_data = collection_data['Plaintext'];
     
-    plaintext_bytes = np.empty((16,100), dtype=bytes);
+    plaintext_bytes = np.empty((16,100), dtype=int);
     for i in range(16):
         for j in range(100):
-            plaintext_bytes[i][j] = bytes.fromhex(plaintext_data.loc[j])[i:i+1]
+            plaintext_bytes[i][j] = int.from_bytes(bytes.fromhex(plaintext_data.loc[j])[i:i+1],"big")
             
     
-    print(plaintext_data);
-    print(plaintext_bytes);
-    # print(bytes.fromhex(plaintext_data.loc[0])[1:2])
+    # print(plaintext_data);
+    # print(plaintext_bytes);
+    # print(int.from_bytes(bytes.fromhex(plaintext_data.loc[0])[0:1],"big"))
     
     return plaintext_bytes;
     
@@ -93,6 +93,7 @@ def getAllKHW(plaintext_nth_byte):
 
 def main():
     # getAllKHW();
+    # getPlaintext("waveform.csv")
     plaintext_bytes = getPlaintext("waveform.csv")
     full_power_matrix = [[]]*16;
     

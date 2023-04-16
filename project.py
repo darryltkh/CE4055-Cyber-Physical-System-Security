@@ -86,6 +86,7 @@ def getAllKHW(plaintext_nth_byte):
     for k in range(0, no_of_possible_values_of_key_byte):
         power_model_matrix[k] = gethwmodel(plaintext_nth_byte,k);
     
+    return power_model_matrix;
     # print(power_model_matrix);
     # print(len(power_model_matrix))
     pass;
@@ -100,7 +101,7 @@ def main():
     for i in range(16):
         full_power_matrix[i] = getAllKHW(plaintext_bytes[i]);
     
-    
+    print(full_power_matrix)
     
 if __name__ == "__main__":
     main();

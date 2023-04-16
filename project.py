@@ -6,6 +6,8 @@ Created on Sun Apr 16 14:52:28 2023
 """
 
 import random;
+import numpy as np;
+import pandas as pd;
 
 def hw(int_no):
     #Count number of ones in a byte...
@@ -34,20 +36,38 @@ Sbox = (
     0xE1, 0xF8, 0x98, 0x11, 0x69, 0xD9, 0x8E, 0x94, 0x9B, 0x1E, 0x87, 0xE9, 0xCE, 0x55, 0x28, 0xDF,
     0x8C, 0xA1, 0x89, 0x0D, 0xBF, 0xE6, 0x42, 0x68, 0x41, 0x99, 0x2D, 0x0F, 0xB0, 0x54, 0xBB, 0x16,
 )
-    
-def gethwmodel(k = 0x20):
-    no_of_traces = 2500;
-    
-    random_plaintext_first_bytes = []
 
-    for random_byte in range(0,no_of_traces):
-        random_plaintext_first_bytes.append(random.randint(0,255))
+
+def getPlaintext(filename):
+    collection_data = pd.read_csv(filename);
+    plaintext_data = collection_data['Plaintext'];
+    
+    plaintext_bytes = np.empty((16,100), dtype=bytes);
+    for i in range(16):
+        for j in range(100):
+            plaintext_bytes[i][j] = bytes.fromhex(plaintext_data.loc[j])[i:i+1]
+            
+    
+    print(plaintext_data);
+    print(plaintext_bytes);
+    # print(bytes.fromhex(plaintext_data.loc[0])[1:2])
+    
+    return plaintext_bytes;
+    
+    
+def gethwmodel(plaintext_byte_array, k = 0x20):
+    no_of_traces = 100;
+    
+    # random_plaintext_first_bytes = []
+
+    # for random_byte in range(0,no_of_traces):
+    #     random_plaintext_first_bytes.append(random.randint(0,255))
 
     leaky_sbox_output_value_array = []
     # print("\n\nValue of Leaky Sbox values for first plaintext byte....\n")
 
     for x in range(0, no_of_traces):
-        leaky_sbox_output_value_array.append(Sbox[random_plaintext_first_bytes[x] ^ k]);
+        leaky_sbox_output_value_array.append(Sbox[plaintext_byte_array[x] ^ k]);
 
     # print(leaky_sbox_output_value_array)
 
@@ -59,18 +79,27 @@ def gethwmodel(k = 0x20):
     
     return hamming_weight_of_leaky_sbox_bytes;
 
-def getAllKHW():
+def getAllKHW(plaintext_nth_byte):
     no_of_possible_values_of_key_byte = 256;
     power_model_matrix = [[]]*no_of_possible_values_of_key_byte;
     
     for k in range(0, no_of_possible_values_of_key_byte):
-        power_model_matrix[k] = gethwmodel(k);
+        power_model_matrix[k] = gethwmodel(plaintext_nth_byte,k);
     
     # print(power_model_matrix);
+    # print(len(power_model_matrix))
     pass;
+    
 
 def main():
-    getAllKHW();
+    # getAllKHW();
+    plaintext_bytes = getPlaintext("waveform.csv")
+    full_power_matrix = [[]]*16;
+    
+    for i in range(16):
+        full_power_matrix[i] = getAllKHW(plaintext_bytes[i]);
+    
+    
     
 if __name__ == "__main__":
     main();

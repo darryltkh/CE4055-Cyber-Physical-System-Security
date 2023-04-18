@@ -67,6 +67,8 @@ def getPowerTrace(filename):
         plt.figure();
         plt.plot(sample_power_trace[i]);
         plt.show();
+        
+    return sample_power_trace
     
     
 def gethwmodel(plaintext_byte_array, k = 0x20):

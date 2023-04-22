@@ -74,7 +74,9 @@ def correlate_model_with_actual_trace(power_model_matrix, power_traces, no_of_tr
     return coeff_per_key_byte, max_coeff_per_key_byte, max_coeff_per_key_byte_column_loc
 
 # Gather data
-collection_data = pd.read_csv('waveform.csv')
+collection_data = pd.read_csv('waveform.csv', header=None)
+trace_columns = ["Trace " + str(i) for i in range(1,TOTAL_POWER_TRACE_POINTS+1)]
+collection_data.columns = ['Plaintext', 'Ciphertext'] + trace_columns
 
 # Divde power trace and plaintexts
 power_traces = collection_data.drop(['Plaintext', 'Ciphertext'], axis='columns')
@@ -114,3 +116,6 @@ for i in range(NO_OF_BYTES_IN_KEY):
 
 predicted_key_bytes_hex = [str(hex(i)).lstrip("0x").upper() for i in predicted_key_bytes]
 print("The secret key is: {}".format(' '.join(predicted_key_bytes_hex)))
+
+
+    

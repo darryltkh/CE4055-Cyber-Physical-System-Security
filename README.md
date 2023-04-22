@@ -1,7 +1,6 @@
 # CE4055 Cyber-Physical System Security Project (AY22/23 Sem 2)
-## Team Name: Cyberbullies
-## Team Members: Ang Kai Jun, Lee Zhe Ren, Tan Kah Heng Darryl
----
+### Team Name: Cyberbullies
+### Team Members: Ang Kai Jun, Lee Zhe Ren, Tan Kah Heng Darryl
 
 
 PLEASE READ THIS BEFORE PROCEEDING.
